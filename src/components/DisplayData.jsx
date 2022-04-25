@@ -52,28 +52,55 @@ const DisplayData = ({ data }) => {
     invoicesList = invoicesList.filter(invoice => invoice !== "").reverse()
 
     let selectedInvoiceData = invoice ? consolidatedDataByInvoice[invoice] : []
+
     let billRateAggregated = groupBy(selectedInvoiceData, "Bill Rate")
-
     let billRates = Object.keys(billRateAggregated);
-
-    let chartData = billRates.map(rate => {
+    let chartDataBillRate = billRates.map(rate => {
         const data = billRateAggregated[rate]
         const totalAmount = data.reduce((a, b) => a + Number(b["Total Billable Amount"]), 0)
         return totalAmount
     })
 
-
-    const displayData = {
+    const displayDataBillRate = {
         labels: billRates,
         datasets: [
             {
                 label: "Invoiced Amount($)",
-                data: chartData,
+                data: chartDataBillRate,
                 backgroundColor: ["rgba(99, 99, 132, 0.8)"],
                 borderColor: ["rgba(99, 99, 132, 0.8)"],
             },
         ],
     };
+
+    let endDateAggregated = groupBy(selectedInvoiceData, "End Date")
+
+    let endDates = Object.keys(endDateAggregated)
+
+    let endDates1 = endDates.map(dt => new Date(dt)).sort((a, b) => a - b)
+
+    endDates1 = endDates1.map(dt => (dt.getMonth() + 1) + "/" + (dt.getDate()) + "/" + dt.getFullYear().toString().slice(2, 4))
+
+
+    let chartDataEndDate = endDates1.map(dt => {
+        const data = endDateAggregated[dt];
+        const totalAmount = data.reduce((a, b) => a + Number(b["Total Billable Amount"]), 0)
+        return totalAmount
+    })
+
+    const displayDataEndDate = {
+        labels: endDates,
+        datasets: [
+            {
+                label: "Invoiced Amount($)",
+                data: chartDataEndDate,
+                backgroundColor: ["rgba(0, 99, 132, 0.8)"],
+                borderColor: ["rgba(99, 0, 132, 0.8)"],
+            },
+        ],
+    };
+
+
 
     const invoiceDataByResource = billRates.map(rate => {
         const resourceData = billRateAggregated[rate];
@@ -106,24 +133,43 @@ const DisplayData = ({ data }) => {
 
             {invoice ?
                 <div>
-
                     <div className="p-4">
-                        <div name="summary">
-                            <h2 className="text-2xl uppercase text-center">Billing Amount($) per Bill Rate: Invoice <span className="font-bold italic">{invoice}</span></h2>
-                            <Bar
-                                data={displayData}
-                                options={{
-                                    title: {
-                                        display: true,
-                                        text: "Size in GB",
-                                        fontSize: 20,
-                                    },
-                                    legend: {
-                                        display: true,
-                                        position: "right",
-                                    },
-                                }}
-                            />
+                        <div name="summary" className="grid grid-cols-2 gap-4">
+                            <div className="border">
+                                <h2 className="text-2xl uppercase text-center">Billing Amount($) per Bill Rate: Invoice <span className="font-bold italic">{invoice}</span></h2>
+                                <Bar
+                                    data={displayDataBillRate}
+                                    options={{
+                                        title: {
+                                            display: true,
+                                            text: "Size in GB",
+                                            fontSize: 20,
+                                        },
+                                        legend: {
+                                            display: true,
+                                            position: "right",
+                                        },
+                                    }}
+                                />
+                            </div>
+                            <div className="border">
+                                <h2 className="text-2xl uppercase text-center">Billing Amount($) per Week: Invoice <span className="font-bold italic">{invoice}</span></h2>
+                                <Bar
+                                    data={displayDataEndDate}
+                                    options={{
+                                        title: {
+                                            display: true,
+                                            text: "Amount in $",
+                                            fontSize: 20,
+                                        },
+                                        legend: {
+                                            display: true,
+                                            position: "right",
+                                        },
+                                    }}
+                                />
+                            </div>
+
                         </div>
 
                         <h2 className="text-2xl uppercase text-center py-10">Breakdown by Bill Rate</h2>
