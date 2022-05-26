@@ -116,7 +116,8 @@ const DisplayData = ({ data }) => {
         let data = resources.map(resource => {
             const data = resourceAggregated[resource]
             const totalAmount = data.reduce((a, b) => a + Number(b["Total Billable Amount"]), 0)
-            return { "Resource": resource, "Amount": totalAmount }
+            const totalHours = data.reduce((a, b) => a + Number(b["Total Hours"]), 0)
+            return { "Resource": resource, "Amount": totalAmount, "Hours": totalHours }
         })
         return { "Bill Rate": rate, "data": data }
     })
@@ -189,11 +190,30 @@ const DisplayData = ({ data }) => {
                                             <div className="flex justify-between p-2">
                                                 <p className="font-bold">Bill Rate: {numberFormat(item["Bill Rate"])}</p>
                                                 <p className="font-bold">Amount: {numberFormat(item["data"].reduce((a, b) => a + Number(b["Amount"]), 0))}</p>
+                                                <p className="font-bold">Hours: {item["data"].reduce((a, b) => a + Number(b["Hours"]), 0)}</p>
                                             </div>
-                                            <div className="p-2 text-right">
-                                                {item["data"].map((d, i) => {
-                                                    return <div key={i}>{d["Resource"]} - {numberFormat(d["Amount"])}</div>
-                                                })}
+                                            <div className="p-2 m-auto">
+                                                <table className="table-auto">
+                                                    <thead>
+                                                        <tr>
+                                                            <td>Resource</td>
+                                                            <td>Amount</td>
+                                                            <td>Hours</td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {item["data"].map((d, i) => {
+                                                            return (
+                                                                <tr key={i}>
+                                                                    <td>{d["Resource"]}</td>
+                                                                    <td>{numberFormat(d["Amount"])}</td>
+                                                                    <td>{d["Hours"]}</td>
+                                                                </tr>)
+
+                                                        })}
+                                                    </tbody>
+                                                </table>
+
                                             </div>
                                         </div>)
                                 })
