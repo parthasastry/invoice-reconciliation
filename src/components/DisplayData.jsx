@@ -42,14 +42,21 @@ const DisplayData = ({ data }) => {
     const [invoice, setInvoice] = useState("")
 
     const handleChange = (event) => {
-        setInvoice(event.target.value);
+        if (event.target.value !== "Select") {
+            setInvoice(event.target.value);
+        } else {
+            setInvoice("");
+        }
+
     };
 
     const consolidatedDataByInvoice = groupBy(data, "Invoice Number")
 
     let invoicesList = Object.keys(consolidatedDataByInvoice)
     // Remove blank Invoice Number
+
     invoicesList = invoicesList.filter(invoice => invoice !== "").reverse()
+    invoicesList.unshift("Select")
 
     let selectedInvoiceData = invoice ? consolidatedDataByInvoice[invoice] : []
 
