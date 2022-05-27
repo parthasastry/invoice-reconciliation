@@ -192,29 +192,27 @@ const DisplayData = ({ data }) => {
                                                 <p className="font-bold">Amount: {numberFormat(item["data"].reduce((a, b) => a + Number(b["Amount"]), 0))}</p>
                                                 <p className="font-bold">Hours: {item["data"].reduce((a, b) => a + Number(b["Hours"]), 0)}</p>
                                             </div>
-                                            <div className="p-2 m-auto">
-                                                <table className="table-auto">
-                                                    <thead>
-                                                        <tr>
-                                                            <td>Resource</td>
-                                                            <td>Amount</td>
-                                                            <td>Hours</td>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {item["data"].map((d, i) => {
-                                                            return (
-                                                                <tr key={i}>
-                                                                    <td>{d["Resource"]}</td>
-                                                                    <td>{numberFormat(d["Amount"])}</td>
-                                                                    <td>{d["Hours"]}</td>
-                                                                </tr>)
+                                            <div>
+                                                <div className="grid grid-cols-3 gap-2 text-center border-b">
+                                                    <p className="font-bold">Resource</p>
+                                                    <p className="font-bold">Amount</p>
+                                                    <p className="font-bold">Hours</p>
+                                                </div>
 
-                                                        })}
-                                                    </tbody>
-                                                </table>
+                                                {item["data"].map((d, i) => {
+                                                    return (
+                                                        <div className="grid grid-cols-3 gap-2 text-center border-b">
+                                                            <p>{d["Resource"]}</p>
+                                                            <p>{numberFormat(d["Amount"])}</p>
+                                                            <p>{d["Hours"].toFixed(2)}</p>
+                                                        </div>
+
+                                                    )
+
+                                                })}
 
                                             </div>
+
                                         </div>)
                                 })
                             }
